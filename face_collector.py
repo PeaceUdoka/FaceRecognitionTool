@@ -27,7 +27,7 @@ if st.button("Start Face Capture") and name:
     status_text = st.empty()
 
     while True:
-        video = st.camera_input()
+        video = st.camera_input("Take pictures")
         
         if not video:
             st.error("Failed to capture")
