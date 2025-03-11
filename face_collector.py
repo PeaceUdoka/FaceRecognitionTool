@@ -2,7 +2,6 @@ import streamlit as st
 import cv2
 import numpy as np
 from supabase import create_client, Client
-from dotenv import load_dotenv
 
 # Load secrets from Streamlit secrets management
 supabase_url = st.secrets["SUPERBASE_URL"]
