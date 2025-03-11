@@ -2,6 +2,7 @@ import streamlit as st
 import cv2
 import numpy as np
 from supabase import create_client, Client
+from PIL import Image
 
 # Load secrets from Streamlit secrets management
 supabase_url = st.secrets["SUPABASE_URL"]
@@ -19,19 +20,20 @@ i = 0
 
 # Webcam capture button
 if st.button("Start Face Capture") and name:
-    video = cv2.VideoCapture(0)
+    
     facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
     
     stframe = st.empty()
     status_text = st.empty()
 
     while True:
-        ret, frame = video.read()
-        if not ret:
-            st.error("Failed to capture video")
+        video = st.camera_input()
+        
+        if not video:
+            st.error("Failed to capture")
             break
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
         faces = facedetect.detectMultiScale(gray, 1.3, 5)
 
         for (x, y, w, h) in faces:
