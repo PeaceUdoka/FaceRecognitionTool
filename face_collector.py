@@ -5,8 +5,8 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 
 # Load secrets from Streamlit secrets management
-supabase_url = st.secrets["supabase"]["url"]
-supabase_key = st.secrets["supabase"]["key"]
+supabase_url = st.secrets["SUPERBASE_URL"]
+supabase_key = st.secrets["SUPERBASE_KEY"]
 supabase = create_client(supabase_url, supabase_key)
 
 st.title("Face Capture App")
