@@ -92,7 +92,7 @@ for face in faces_data:
                except Exception as e:
                    st.error(f"Error uploading image {j}: {e}")
 
-        st.success(f"Successfully uploaded {len(faces_data)} faces!")
+               st.success(f"Successfully uploaded {len(faces_data)} faces!")
 
 
 
