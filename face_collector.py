@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import os
 import time  # Import the time module
-
+from camera_input_live import camera_input_live
 from supabase import create_client, Client
 
 # Initialize Supabase client from Streamlit secrets
@@ -18,7 +18,7 @@ st.title("Face Capture from Video App")
 name = st.text_input("Enter your first name:")
 
 # Initialize video capture
-video = cv2.VideoCapture(0)
+video = camera_input_live()
 
 # Check if the webcam opened successfully
 if not video.isOpened():
