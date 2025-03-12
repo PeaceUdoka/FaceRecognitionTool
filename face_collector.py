@@ -79,7 +79,7 @@ video.release()
 cv2.destroyAllWindows()
 
 # Upload faces data to Supabase Storage
- j = 1
+j = 1
 for face in faces_data:
                try:
                    response = supabase.storage.from_("faces").upload(
