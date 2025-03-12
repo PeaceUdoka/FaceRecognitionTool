@@ -20,11 +20,6 @@ name = st.text_input("Enter your first name:")
 # Initialize video capture
 video = camera_input_live()
 
-# Check if the webcam opened successfully
-if not video.isOpened():
-    st.error("Unable to access the webcam.")
-    st.stop()
-
 # Face detection setup
 facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
 
