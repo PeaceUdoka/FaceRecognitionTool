@@ -71,20 +71,16 @@ while st.session_state.run:
         video_placeholder.image(frame, channels="BGR")
 
 
-         if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
+        if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
             break
 
 # Release the video capture object
 video.release()
 cv2.destroyAllWindows()
-        
-# Release the video capture object
-        video.release()
 
-        # Upload faces data to Supabase Storage
-        if name:
-           j = 1
-           for face in faces_data:
+# Upload faces data to Supabase Storage
+ j = 1
+for face in faces_data:
                try:
                    response = supabase.storage.from_("faces").upload(
                        file=face,
@@ -98,6 +94,5 @@ cv2.destroyAllWindows()
 
         st.success(f"Successfully uploaded {len(faces_data)} faces!")
 
-else:
-        st.warning("Please enter your name.")
+
 
