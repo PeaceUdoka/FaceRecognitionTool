@@ -1,4 +1,4 @@
 streamlit
 opencv-python-headless
 supabase
-streamlit-webrtc
+kivy
