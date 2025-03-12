@@ -65,8 +65,11 @@ def capture(frame: av.VideoFrame):
          if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
             break
 
-       
+         
          cv2.destroyAllWindows()
+         return av.VideoFrame.from_ndarray(img, format="bgr24")
+
+
 webrtc_streamer(
     key="streamer",
     video_frame_callback=capture,
