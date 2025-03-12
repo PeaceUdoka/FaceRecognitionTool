@@ -64,9 +64,9 @@ if st.button("Start Face Capture") and name:
         if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
             break
 
-# Release the video capture object
-video.release()
-cv2.destroyAllWindows()
+        # Release the video capture object
+        video.release()
+        cv2.destroyAllWindows()
 
 # Upload faces data to Supabase Storage
 j = 1
