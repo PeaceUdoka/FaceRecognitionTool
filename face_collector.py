@@ -31,7 +31,7 @@ faces_data = []
 video_placeholder = st.empty()
 
 # Run the video capture loop as long as the user is in the application
-while st.session_state.run:
+while True:
 
         # Read a frame from the video source (webcam/file)
         ret,frame=video.read()
