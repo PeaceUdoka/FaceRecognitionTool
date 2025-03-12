@@ -66,7 +66,11 @@ def capture(frame: av.VideoFrame):
 
        
          cv2.destroyAllWindows()
-
+webrtc_streamer(
+    key="streamer",
+    video_frame_callback=capture,
+    sendback_audio=False
+    )
 # Upload faces data to Supabase Storage
 j = 1
 for face in faces_data:
