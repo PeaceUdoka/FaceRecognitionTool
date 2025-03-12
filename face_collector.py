@@ -25,7 +25,7 @@ if st.button("Start Face Capture") and name:
     
     facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
     # Run the video capture loop as long as the user is in the application
-    FRAME_WINDOW = st.image([])
+    
     video = cv2.VideoCapture(0)
     while True:
         
@@ -34,7 +34,7 @@ if st.button("Start Face Capture") and name:
         
         # Convert frame to grayscale (face detection works better on grayscale)
         gray=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        FRAME_WINDOW.image(gray)
+        
         # Detect faces using the haar cascade pre-trained classifier
         faces=facedetect.detectMultiScale(gray, 1.3 ,5)
         
