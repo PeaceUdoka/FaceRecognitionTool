@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import os
 from supabase import create_client, Client
+from streamlit_webrtc import webrtc_streamer
+
 
 # Initialize Supabase client from Streamlit secrets
 supabase_url = os.environ.get("SUPABASE_URL")
@@ -15,30 +17,27 @@ st.title("Face Capture from Video App")
 # Get user name
 name = st.text_input("Enter your first name:")
 
-
-
 # Initialize frame counter and faces data list
 i = 0
 faces_data = []
-# Webcam capture button
-if st.button("Start Face Capture") and name:
+
+def capture(frame: av.VideoFrame):
+    video = frame.to_ndarray(format="bgr24")
+
+    if st.button("Start Face Capture") and name:
     
-    facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
-    # Run the video capture loop as long as the user is in the application
+       facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
+        # Run the video capture loop as long as the user is in the application
     
-    video = cv2.VideoCapture(0)
-    while True:
+       while True:
         
-        # Read a frame from the video source (webcam/file)
-        ret,frame=video.read()
+         # Convert frame to grayscale (face detection works better on grayscale)
+         gray=cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
         
-        # Convert frame to grayscale (face detection works better on grayscale)
-        gray=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+         # Detect faces using the haar cascade pre-trained classifier
+         faces=facedetect.detectMultiScale(gray, 1.3 ,5)
         
-        # Detect faces using the haar cascade pre-trained classifier
-        faces=facedetect.detectMultiScale(gray, 1.3 ,5)
-        
-        for (x, y, w, h) in faces:
+         for (x, y, w, h) in faces:
             # Crop the face region from the frame
             crop_img = frame[y:y+h, x:x+w, :]
             
@@ -58,16 +57,15 @@ if st.button("Start Face Capture") and name:
             # Draw rectangle around detected face
             cv2.rectangle(frame, (x,y), (x+w, y+h), (50,50,255), 1)
 
-        # Show the processed frame
-        video_placeholder.image(frame, channels="BGR")
+         # Show the processed frame
+         video_placeholder.image(frame, channels="BGR")
 
 
-        if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
+         if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
             break
 
-        # Release the video capture object
-        video.release()
-        cv2.destroyAllWindows()
+       
+         cv2.destroyAllWindows()
 
 # Upload faces data to Supabase Storage
 j = 1
