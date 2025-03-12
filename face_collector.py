@@ -4,6 +4,7 @@ import numpy as np
 import os
 from supabase import create_client, Client
 from streamlit_webrtc import webrtc_streamer
+import av
 
 
 # Initialize Supabase client from Streamlit secrets
