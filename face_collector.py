@@ -24,8 +24,8 @@ faces_data = []
 if st.button("Start Face Capture") and name:
     
     facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
-# Run the video capture loop as long as the user is in the application
-   while True:
+    # Run the video capture loop as long as the user is in the application
+    while True:
         FRAME_WINDOW = st.image([])
         video = cv2.VideoCapture(0)
         # Read a frame from the video source (webcam/file)
