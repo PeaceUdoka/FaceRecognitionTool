@@ -1,72 +1,103 @@
 import streamlit as st
 import cv2
 import numpy as np
+import os
+import time  # Import the time module
+
 from supabase import create_client, Client
-from PIL import Image
 
-# Load secrets from Streamlit secrets management
-supabase_url = st.secrets["SUPABASE_URL"]
-supabase_key = st.secrets["SUPABASE_KEY"]
-supabase = create_client(supabase_url, supabase_key)
+# Initialize Supabase client from Streamlit secrets
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_key = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
 
-st.title("Face Capture App")
+
+st.title("Face Capture from Video App")
 
 # Get user name
 name = st.text_input("Enter your first name:")
 
-# Initialize variables
-faces_data = []
+# Initialize video capture
+video = cv2.VideoCapture(0)
+
+# Check if the webcam opened successfully
+if not video.isOpened():
+    st.error("Unable to access the webcam.")
+    st.stop()
+
+# Face detection setup
+facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
+
+# Initialize frame counter and faces data list
 i = 0
+faces_data = []
 
-# Webcam capture button
-if st.button("Start Face Capture") and name:
-    
-    facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
-    
-    stframe = st.empty()
-    status_text = st.empty()
+# Create a placeholder for the video stream
+video_placeholder = st.empty()
 
-    while True:
-        video = st.camera_input("Take pictures")
+# Run the video capture loop as long as the user is in the application
+while st.session_state.run:
+
+        # Read a frame from the video source (webcam/file)
+        ret,frame=video.read()
         
-        if not video:
-            st.error("Failed to capture")
-            break
+        # Convert frame to grayscale (face detection works better on grayscale)
+        gray=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        gray = cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
-        faces = facedetect.detectMultiScale(gray, 1.3, 5)
-
+        # Detect faces using the haar cascade pre-trained classifier
+        faces=facedetect.detectMultiScale(gray, 1.3 ,5)
+        
         for (x, y, w, h) in faces:
+            # Crop the face region from the frame
             crop_img = frame[y:y+h, x:x+w, :]
+            
+            # Resize cropped face to 50x50 pixels 
             resized_img = cv2.resize(crop_img, (50, 50))
             
+            # Collect every 10th face until 100 faces are stored
             if len(faces_data) <= 100 and i % 10 == 0:
                 faces_data.append(resized_img)
             
+            # Increment frame counter
             i += 1
             
-            cv2.putText(frame, str(len(faces_data)), (50,50), 
-                        cv2.FONT_HERSHEY_COMPLEX, 1, (50,50,255), 1)
+            # Display current face count on the frame
+            cv2.putText(frame, str(len(faces_data)), (50,50), cv2.FONT_HERSHEY_COMPLEX, 1, (50,50,255), 1)
+            
+            # Draw rectangle around detected face
             cv2.rectangle(frame, (x,y), (x+w, y+h), (50,50,255), 1)
 
-        # Display frame in Streamlit
-        stframe.image(frame, channels="BGR")
-        
-        # Check completion conditions
-        if len(faces_data) >= 100:
-            video.release()
-            cv2.destroyAllWindows()
+        # Show the processed frame
+        video_placeholder.image(frame, channels="BGR")
+
+
+         if cv2.waitKey(1) & 0xFF == ord('q') or len(faces_data) >= 100:
             break
 
-    # Upload to Supabase after collection
-    if faces_data:
-        j = 1
-        for face in faces_data:
-            response = supabase.storage.from_("faces").upload(
-                file=face,
-                path=f"{name}/{name}{j}.png",
-                file_options={"content-type": "image/png"}
-            )
-            j += 1
+# Release the video capture object
+video.release()
+cv2.destroyAllWindows()
         
+# Release the video capture object
+        video.release()
+
+        # Upload faces data to Supabase Storage
+        if name:
+           j = 1
+           for face in faces_data:
+               try:
+                   response = supabase.storage.from_("faces").upload(
+                       file=face,
+                       path=f"{name}/{name}{j}.png",
+                       file_options={"content-type": "image/png"}
+                   )
+                   
+                   j += 1
+               except Exception as e:
+                   st.error(f"Error uploading image {j}: {e}")
+
         st.success(f"Successfully uploaded {len(faces_data)} faces!")
+
+else:
+        st.warning("Please enter your name.")
+
