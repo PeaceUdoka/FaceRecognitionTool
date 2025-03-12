@@ -10,7 +10,6 @@ import cv2
 import numpy as np
 import io
 
-kivy.require('2.0.0')  # Or your Kivy version
 
 class CameraKivyApp(App):
 
