@@ -2,8 +2,6 @@ import streamlit as st
 import cv2
 import numpy as np
 import os
-import time  # Import the time module
-from camera_input_live import camera_input_live
 from supabase import create_client, Client
 
 # Initialize Supabase client from Streamlit secrets
@@ -17,22 +15,19 @@ st.title("Face Capture from Video App")
 # Get user name
 name = st.text_input("Enter your first name:")
 
-# Initialize video capture
-video = camera_input_live()
 
-# Face detection setup
-facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
 
 # Initialize frame counter and faces data list
 i = 0
 faces_data = []
-
-# Create a placeholder for the video stream
-video_placeholder = st.empty()
-
+# Webcam capture button
+if st.button("Start Face Capture") and name:
+    
+    facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
 # Run the video capture loop as long as the user is in the application
-while True:
-
+   while True:
+        FRAME_WINDOW = st.image([])
+        video = cv2.VideoCapture(0)
         # Read a frame from the video source (webcam/file)
         ret,frame=video.read()
         
