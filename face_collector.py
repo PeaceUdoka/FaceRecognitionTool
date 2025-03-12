@@ -28,13 +28,13 @@ def capture(frame: av.VideoFrame):
     facedetect = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
         # Run the video capture loop as long as the user is in the application
     
-    while True:
+    #while True:
         
          # Convert frame to grayscale (face detection works better on grayscale)
-         gray=cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
+         #gray=cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
         
          # Detect faces using the haar cascade pre-trained classifier
-         faces=facedetect.detectMultiScale(gray, 1.3 ,5)
+         #faces=facedetect.detectMultiScale(gray, 1.3 ,5)
         
          
             #cv2.rectangle(frame, (x,y), (x+w, y+h), (50,50,255), 1)
@@ -45,7 +45,7 @@ def capture(frame: av.VideoFrame):
           #  break
 
          
-         return av.VideoFrame.from_ndarray(img, format="bgr24")
+     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
 webrtc_streamer(
