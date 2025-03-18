@@ -1,4 +1,2 @@
-streamlit
 opencv-python-headless
-supabase
-kivy
+psycopg2
