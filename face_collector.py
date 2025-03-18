@@ -106,7 +106,7 @@ def write_blob(personID,face,name):
     finally: 
         # Since we do not have to do anything here we will pass 
         pass
-    print("Saved faces")
+print("Saved faces")
         
 # Call the create table method       
 create_table() 
