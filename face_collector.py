@@ -60,7 +60,7 @@ import psycopg2
 def create_connection(): 
     conn = psycopg2.connect(dbname='FaceRecog', 
                             user='postgres', 
-                            password='Ifechukwu', #st.secret[]
+                            password=password,
                             host='localhost', 
                             port='5432') 
     # Get the cursor object from the connection object 
