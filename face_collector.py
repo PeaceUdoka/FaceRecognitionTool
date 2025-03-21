@@ -1,7 +1,12 @@
 import cv2
 import numpy as np
 import os
- 
+import psycopg2 
+import matplotlib.pyplot as plt
+import numpy
+import base64
+import pandas as pd
+
 name = str(input("Please enter your first name: "))
 
 video=cv2.VideoCapture(0)
@@ -53,8 +58,6 @@ video.release()
 cv2.destroyAllWindows()
 
 #faces_data=np.asarray(faces_data)
-
-import psycopg2 
 
 # Connect to the postgreSQL database 
 def create_connection(): 
@@ -115,7 +118,7 @@ for i, face in enumerate(faces_data):
     personID = name+str(i)
     write_blob(personID,face,name)
 
-import pandas as pd
+
 def read_img(): 
     conn, curr = create_connection() 
     curr.execute("SELECT * FROM authorized")
@@ -124,11 +127,7 @@ def read_img():
     return df
     
 df = read_img()
-print(df)
 
-import matplotlib.pyplot as plt
-import numpy
-import base64
 head = df.head()
 def Display_images(head):
     plt.figure(figsize=(10, 10))
