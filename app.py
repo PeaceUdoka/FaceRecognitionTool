@@ -2,6 +2,7 @@ import streamlit as st
 import cv2
 import numpy as np
 import tensorflow as tf
+from PIL import Image
 
 # Load the model with caching for efficiency
 @st.cache_resource
@@ -31,35 +32,37 @@ def predict(face_dim):
     model = load_model()
     prediction = model.predict(face_dim).astype(int)
     if prediction == 0:
-        st.sucess("Access granted. Welcome KC!")
+        st.success("Access granted. Welcome KC!", icon="✅")
     elif prediction == 1:
-        st.sucess("Access granted. Welcome Peace!")
+        st.success("Access granted. Welcome Peace!", icon="✅")
     else:
-        st.sucess("Access denied!!!")
+        st.success("Access denied!!!", icon="❌")
 
 # Streamlit UI
 st.title("Secret Vault Access")
 
-# Button to initiate photo capture
-if st.button("Scan"):
-    # Camera input widget
-    captured_image = st.camera_input("Capture your face")
+#key to save face captured
+if 'face' not in st.session_state.keys():
+    st.session_state['face'] = None
+    
+# Camera input widget
+captured_image = st.camera_input("Scan", label_visibility = "hidden")
 
-    if captured_image is not None:
-        # Convert captured image to OpenCV format
-        bytes_data = captured_image.getvalue()
-        img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+if captured_image:
+    
+    image = Image.open(captured_image)
+    #st.image(image)
+    st.session_state['face'] = np.array(image.convert('RGB'))
 
-        # Preprocess the image for face detection and resizing
-        faces = preprocess(img)
+    faces = preprocess(st.session_state['face'])
 
-        if faces:
-            # Prepare input for the model
-            face_dim = np.expand_dims(faces[0], axis=0)
-            # Make prediction using the loaded model
-            try:
-                prediction = predict(face_dim)
-            except Exception as e:
-                st.error(f"Failed! Please try again")
-        else:
-            st.warning("No faces detected!")
+    if faces:
+        # Prepare input for the model
+        face_dim = np.expand_dims(faces[0], axis=0)
+        # Make prediction using the loaded model
+        try:
+            predict(face_dim)
+        except Exception as e:
+            st.error("Failed! Please try again", icon="🚨")
+    else:
+        st.warning("No faces detected!", icon="🚨")
